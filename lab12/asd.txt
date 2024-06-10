@@ -1,0 +1,35 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
+
+describe('TODO list app tests', () => {
+  test('Check homepage layout', () => {
+    render(<App />);
+    expect(screen.getByText('TODO List')).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(2); 
+    expect(screen.getAllByRole('textbox')).toHaveLength(2); 
+    expect(screen.getByText('No todos found')).toBeInTheDocument(); 
+  });
+
+  test('Check logical input field', () => {
+    render(<App />);
+    const inputField = screen.getByPlaceholderText('Enter your todo');
+    fireEvent.change(inputField, { target: { value: 'New todo item' } }); 
+    fireEvent.click(screen.getByText('Add')); 
+    expect(screen.getByText('New todo item')).toBeInTheDocument(); 
+  });
+
+  test('Check todo list component', () => {
+    render(<App />);
+    const todos = ['Todo 1', 'Todo 2', 'Todo 3'];
+    todos.forEach(todo => {
+      fireEvent.change(screen.getByPlaceholderText('Enter your todo'), { target: { value: todo } });
+      fireEvent.click(screen.getByText('Add'));
+    });
+    todos.forEach(todo => {
+      expect(screen.getByText(todo)).toBeInTheDocument(); 
+    });
+  });
+
+
+});
